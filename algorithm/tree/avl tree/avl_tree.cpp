@@ -34,10 +34,10 @@ AvlTree Insert(ElementType x, AvlTree T)
 		//高度不平衡时，该结点的两棵子树高度差为2
 		if (Height(T->Left) - Height(T->Right) == 2)
 		{
-			if (x < T->Left->Element)//LL->R
-				T = SingleRotateWithLeft(T);
-			else  //LR->RL
-				T = DoubleRotateWithLeft(T);
+			if (x < T->Left->Element)//Problem: LL->Solution:R
+				T = SingleRotateR(T);
+			else  //Problem: LR->Solution: LR
+				T = DoubleRotateLR(T);
 		}
 	}
 	else if (x > T->Element)
@@ -45,10 +45,10 @@ AvlTree Insert(ElementType x, AvlTree T)
 		T->Right = Insert(x, T->Right);
 		if (Height(T->Right) - Height(T->Left) == 2)
 		{
-			if (x > T->Right->Element)//RR->L
-				T = SingleRotateWithRight(T);
-			else//RL->LR
-				T = DoubleRotateWithRight(T);
+			if (x > T->Right->Element)//Problem: RR->Solution:L
+				T = SingleRotateL(T);
+			else//Problem: RL->Solution:RL
+				T = DoubleRotateRL(T);
 		}
 	}
 	T->Height = Max(Height(T->Left), Height(T->Right)) + 1;
@@ -57,8 +57,169 @@ AvlTree Insert(ElementType x, AvlTree T)
 
 AvlTree Delete(ElementType x, AvlTree T)
 {
-	return AvlTree();
+	if (T == NULL)
+		return T;
+	if (x < T->Element)
+	{
+		T->Left = Delete(x, T->Left);
+		//在执行了Delete操作后，需要判断当前结点的平衡因子；由于删除是递归进行的，
+		//所以每次遇到平衡因子为2的情况，则调整结点，一直到树根
+		//
+		//如果删除导致了树的不平衡
+		if (2 == Height(T->Right) - Height(T->Left))
+		{
+			//可以看成是RL插入的情况
+			if (T->Right->Left && (Height(T->Right->Left) > Height(T->Right->Right)))
+				DoubleRotateRL(T);
+			else
+				//可以看出是RR插入的情况
+				SingleRotateL(T);
+		}
+	}
+	else if (x > T->Element)
+	{
+		T->Right = Delete(x, T->Right);
+		//如果删除导致了树的不平衡
+		if (2 == Height(T->Left) - Height(T->Right))
+		{
+			//可以看成是LR插入的情况
+			if (T->Left->Right && (Height(T->Left->Right) > Height(T->Left->Left)))
+				DoubleRotateLR(T);
+			else
+				//可以看出是LL插入的情况
+				SingleRotateR(T);
+		}
+	}
+	else
+	{
+		//当前结点为待删除的结点
+
+		//当前结点有左右孩子
+		if (T->Left &&T->Right)
+		{
+			//如果后继存在，把后继结点的值赋值给当前结点
+			Position temp = FindSuccessor(T);
+			if (temp != NULL)
+			{
+				T->Element = temp->Element;
+				//在右子树中删除
+				T->Right = Delete(temp->Element, T->Right);
+				if (2 == Height(T->Left) - Height(T->Right))
+				{
+					if (T->Left->Right && (Height(T->Left->Right) > Height(T->Left->Left)))
+						DoubleRotateLR(T);
+					else
+						SingleRotateR(T);
+				}
+			}
+			//如果后继不存在，则使用前驱
+			else
+			{
+				T->Element = temp->Element;
+				temp = FindPrecursor(T);
+				//在左子树中删除
+				T->Left = Delete(temp->Element, T->Left);
+				if (2 == Height(T->Right) - Height(T->Left))
+				{
+					if (T->Right->Left && (Height(T->Right->Left) > Height(T->Right->Right)))
+						DoubleRotateRL(T);
+					else
+						SingleRotateL(T);
+				}
+			}
+		}
+		else
+		{
+			AvlTree temp = T;
+			//当前结点没有左孩子
+			if (T->Left == NULL)
+			{
+				T = T->Right;
+			}
+			//当前结点没有右孩子
+			else if (T->Right == NULL)
+			{
+				T = T->Left;
+			}
+			delete temp;
+			temp = NULL;
+		}
+	}
+	if(T!=NULL)
+		T->Height = Max(Height(T->Left), Height(T->Right)) + 1;
+	return T;
 }
+
+Position FindPrecursor(Position T)
+{
+	if (T == NULL)
+		return T;
+	Position cur = T->Left;
+
+	//找左子树中最大的结点
+	if (cur != NULL)
+	{
+		while (cur->Right != NULL)
+			cur = cur->Right;
+	}
+	return cur;
+
+}
+
+Position FindSuccessor(Position T)
+{
+	if (T == NULL)
+		return T;
+	Position cur = T->Right;
+
+	//找右子树中最小的结点
+	if (cur != NULL)
+	{
+		while (cur->Left != NULL)
+			cur = cur->Left;
+	}
+	return cur;
+}
+
+void Free(AvlTree T)
+{
+	if (T == NULL)
+		return;
+	if (T->Left)
+		Free(T->Left);
+	if (T->Right)
+		Free(T->Right);
+	delete T;
+	T = NULL;
+}
+
+bool IsAvl(AvlTree T)
+{
+	if (T == NULL)
+		return true ;
+	bool r1 = false;
+	bool r2 = false;
+	bool r3 = false;
+	int dh = Height(T->Left) - Height(T->Right);
+	if (dh <= 1 && dh >= -1)
+		r1 = true;
+
+	r2 = IsAvl(T->Left);
+	r3 = IsAvl(T->Right);
+	return r1 && r2 && r3;
+}
+
+void IsAvlTree(AvlTree T)
+{
+	if (IsAvl(T))
+		std::cout << "This is avl tree." << std::endl;
+	else
+		std::cout << "not avl tree" << std::endl;
+}
+
+
+
+
 
 void PrintTree(AvlTree T)
 {
@@ -81,7 +242,7 @@ void PrintTree(AvlTree T)
 		if (cur->Right)
 			queue_.push(cur->Right);
 	}
-
+	std::cout << std::endl;
 }
 
 int Height(Position P)
@@ -121,7 +282,7 @@ LL插入到subtree x中后，R旋转；
 				subtree y	 subtree z
 */
 
-Position SingleRotateWithLeft(Position k2)
+Position SingleRotateR(Position k2)
 {
 	Position k1;
 
@@ -156,8 +317,8 @@ RR插入到subtree z后，L旋转；
 */
 
 
-//和SingleRotateWithLeft对称
-Position SingleRotateWithRight(Position k2)
+//和SingleRotateWithR对称
+Position SingleRotateL(Position k2)
 {
 	Position k1;
 
@@ -202,18 +363,18 @@ LR插入后subtree y 后，可以把subtree y看成右一个根结点和两棵子树；
 				/		\		  /			\
 		subtree A   subtree B   subtree C   subtree D
 */
-Position DoubleRotateWithLeft(Position k3)
+Position DoubleRotateLR(Position k3)
 {
-	k3->Left = SingleRotateWithRight(k3->Left);
-	return SingleRotateWithLeft(k3);
+	k3->Left = SingleRotateL(k3->Left);
+	return SingleRotateR(k3);
 }
 
 
-//和DoubleRotateWithLeft对称
-Position DoubleRotateWithRight(Position k3)
+//和DoubleRotateLR对称
+Position DoubleRotateRL(Position k3)
 {
-	k3->Right = SingleRotateWithLeft(k3->Right);
-	return SingleRotateWithRight(k3);
+	k3->Right = SingleRotateR(k3->Right);
+	return SingleRotateL(k3);
 }
 
 
@@ -237,5 +398,12 @@ int main()
 	T = Insert(8, T); 
 	T = Insert(9, T);
 	PrintTree(T);
+	IsAvlTree(T);
+	T = Delete(7, T);
+	PrintTree(T);
+	IsAvlTree(T);
+
+	
+	Free(T);
 	return 0;
 }

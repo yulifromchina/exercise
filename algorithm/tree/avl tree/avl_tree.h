@@ -10,11 +10,17 @@ using ElementType = int;
 
 AvlTree Insert(ElementType x, AvlTree T);
 AvlTree Delete(ElementType x, AvlTree T);
+Position FindPrecursor(Position T);
+Position FindSuccessor(Position T);
+void Free(AvlTree T);
+bool IsAvl(AvlTree T);
+void IsAvlTree(AvlTree T);
+
 void PrintTree(AvlTree T);
 
 static int Height(Position P);
 static int Max(int a, int b);
-static Position SingleRotateWithLeft(Position);
-static Position SingleRotateWithRight(Position);
-static Position DoubleRotateWithLeft(Position);
-static Position DoubleRotateWithRight(Position);
+static Position SingleRotateR(Position);
+static Position SingleRotateL(Position);
+static Position DoubleRotateLR(Position);
+static Position DoubleRotateRL(Position);
