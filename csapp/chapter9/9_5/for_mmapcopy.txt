@@ -1,0 +1,1 @@
+The mmapcopy.c copy a random disk file to stdout.
