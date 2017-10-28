@@ -24,6 +24,9 @@ int Min(int a, int b, int c)
 //取得第index位的丑数
 int GetUgly(int index)
 {
+	if(index <=0)
+		throw new exception("Invalid Parameter");
+
 	int * ugly_arr = new int[index]();
 	if (ugly_arr == NULL)
 		throw new exception("Allocate Error");
@@ -54,6 +57,12 @@ int GetUgly(int index)
 
 int main()
 {
+	//cout<< GetUgly(0) << endl;
 	cout << GetUgly(1500) << endl;
+	cout << GetUgly(1) << endl;
+	cout << GetUgly(2) << endl;
+	cout << GetUgly(3) << endl;
+	cout << GetUgly(4) << endl;
+	cout << GetUgly(6) << endl;
 	return 0;
 }
