@@ -1,50 +1,50 @@
-//#include<iostream>
-//#include<string>
-//using namespace std;
-//
-//class ProtoType
-//{
-////protectedÀàÐÍ¶ÔÅÉÉúÀàÊÇ¿É·ÃÎÊµÄ£¬¶ÔÍâÊÇ²»¿É·ÃÎÊµÄ
-//protected:
-//	int id;
-//	string name;
-//public:
-//	virtual ProtoType * Clone() { return NULL; }
-//	ProtoType() { }//µ÷ÓÃ¿½±´¹¹Ôìº¯ÊýÊ±»áµ÷ÓÃ¸¸ÀàµÄÄ¬ÈÏ¹¹Ôìº¯Êý
-//	ProtoType(string s, int i) :name(s), id(i) {}
-//};
-//
-//class ConcreteProtoType :public ProtoType
-//{
-//public:
-//	//ºÏ³ÉÄ¬ÈÏº¯Êý
-//	//ConcreteProtoType() = default;
-//	ConcreteProtoType(string s, int i) :ProtoType(s, i) {}
-//	//¿½±´¹¹Ôìº¯Êý
-//	ConcreteProtoType(const ConcreteProtoType & cpt)
-//	{
-//		this->id = cpt.id;
-//		++this->id;
-//		this->name = cpt.name + "_child";
-//		cout << "¿½±´¹¹Ôìº¯Êýµ÷ÓÃ" << endl;
-//	}
-//	ConcreteProtoType * Clone()
-//	{
-//		return new ConcreteProtoType(*this);
-//	}
-//	void Show()
-//	{
-//		cout << "id:" << this->id << "  name:" << this->name << endl;
-//	}
-//};
-//
-//int main()
-//{
-//	ConcreteProtoType * c1 = new ConcreteProtoType("Lillian",1);
-//	ConcreteProtoType * c2 = c1->Clone();
-//	ConcreteProtoType * c3 = c2->Clone();
-//	c1->Show();
-//	c2->Show();
-//	c3->Show();
-//	return 0;
-//}
+#include<iostream>
+#include<string>
+using namespace std;
+
+class ProtoType
+{
+//protectedç±»åž‹å¯¹æ´¾ç”Ÿç±»æ˜¯å¯è®¿é—®çš„ï¼Œå¯¹å¤–æ˜¯ä¸å¯è®¿é—®çš„
+protected:
+	int id;
+	string name;
+public:
+	virtual ProtoType * Clone() { return NULL; }
+	ProtoType() { }//è°ƒç”¨æ‹·è´æž„é€ å‡½æ•°æ—¶ä¼šè°ƒç”¨çˆ¶ç±»çš„é»˜è®¤æž„é€ å‡½æ•°
+	ProtoType(string s, int i) :name(s), id(i) {}
+};
+
+class ConcreteProtoType :public ProtoType
+{
+public:
+	//åˆæˆé»˜è®¤å‡½æ•°
+	//ConcreteProtoType() = default;
+	ConcreteProtoType(string s, int i) :ProtoType(s, i) {}
+	//æ‹·è´æž„é€ å‡½æ•°
+	ConcreteProtoType(const ConcreteProtoType & cpt)
+	{
+		this->id = cpt.id;
+		++this->id;
+		this->name = cpt.name + "_child";
+		cout << "æ‹·è´æž„é€ å‡½æ•°è°ƒç”¨" << endl;
+	}
+	ConcreteProtoType * Clone()
+	{
+		return new ConcreteProtoType(*this);
+	}
+	void Show()
+	{
+		cout << "id:" << this->id << "  name:" << this->name << endl;
+	}
+};
+
+int main()
+{
+	ConcreteProtoType * c1 = new ConcreteProtoType("Lillian",1);
+	ConcreteProtoType * c2 = c1->Clone();
+	ConcreteProtoType * c3 = c2->Clone();
+	c1->Show();
+	c2->Show();
+	c3->Show();
+	return 0;
+}
