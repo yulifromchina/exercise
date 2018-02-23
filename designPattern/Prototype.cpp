@@ -18,7 +18,7 @@ class ConcreteProtoType :public ProtoType
 {
 public:
 	//合成默认函数
-	//ConcreteProtoType() = default;
+	ConcreteProtoType() = default;
 	ConcreteProtoType(string s, int i) :ProtoType(s, i) {}
 	//拷贝构造函数
 	ConcreteProtoType(const ConcreteProtoType & cpt)
